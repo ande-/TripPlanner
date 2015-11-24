@@ -1,0 +1,43 @@
+body {
+	width: 900px;
+	margin: auto;
+}
+
+#header {
+	background-color: #88DDAA;
+	text-align: center;
+}
+
+.sideview {
+	text-align: center;
+}
+
+#map {
+	width: 400px;
+	height: 400px;
+	background-color: #DDDDDD;
+}
+
+#map-input {
+	width: 70%;
+}
+
+ul {
+    list-style: none;
+    text-align: left;
+}
+
+#place-list {
+	margin: 0, 30, 0, 30;
+}
+
+.remove-button {
+	color: red;
+	background-color: transparent;
+	border: none;
+}
+
+button:focus {
+	outline: 0;
+	box-shadow: none;
+}
