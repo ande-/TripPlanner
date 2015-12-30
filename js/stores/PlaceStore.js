@@ -2,6 +2,10 @@ var EventEmitter = require('events').EventEmitter; // npm module used in flux
 var assign = require('object-assign');
 var Dispatcher = require('../Dispatcher');
 var Constants = require('../Constants');
+var Request = require('request');
+
+
+const URL = 'http://localhost:8080/location';
 
 var CHANGE_EVENT = 'change';
 
@@ -10,22 +14,19 @@ var _places = [];
 var MAX_LENGHT = 20;
 // internal operations on the data
 function create(name, location) {
-	_places.push({
-		id: new Date(),
+	var newPlace = {
+		key: new Date(),
 		name: name,
 		location: location
-	});
-	console.log('CREATED a place');
-	console.log('places: '+ _places);
-	for (var i = 0; i<_places.length; i++) {
-		console.log(_places[i].name, _places[i].location);
-	}
+	};	
+	console.log('CREATED a place: '+ newPlace.name, newPlace.location);
+	storeInDatabase(newPlace);
 }
 
 function destroy(id) {
 	var index;
 	for(var i = 0; i < _places.length; i++) {
-		if (_places[i].id === id) {
+		if (_places[i].key === id) {
 			index = i;
 		}
 	}
@@ -33,10 +34,48 @@ function destroy(id) {
 	_places.splice(index, 1);
 }
 
+function storeInDatabase (newPlace) {
+	console.log('about to post new location');
+	Request.post({url: URL, json: newPlace})
+		.on('response',function(response) {
+			var data = [];
+			response.on('data', function(chunk) {
+				data.push(chunk);
+	    	});
+	    	response.on('end', function() {
+    			console.log('store post payload: ' + data);
+    			PlaceStore.emitChange();
+	    	});
+   		});
+}
+
+function loadFromDatabase (cb) {
+	Request.get(URL)
+		.on('response',function(response) {
+			var data = [];
+			response.on('data', function(chunk) {
+				data.push(chunk);
+	    	});
+	    	response.on('end', function() {
+	     	var result = JSON.parse(data).payload;
+    			console.log('load all payload: ')
+    			console.log(result);
+    			for(var i =0; i<result.length; i++) {
+    				var exists = false; 
+    				for (var j = 0; j < _places.length; j++) {
+    					if (_places[j].key == result[i].key) exists = true;
+    				}
+    				if (!exists) _places.push(result[i]);
+    			};
+    			cb(_places);
+	    	});
+   		});
+}
+
 var PlaceStore = assign({}, EventEmitter.prototype,  {
 
-	getAll: function() {
-		return _places;
+	getAll: function(cb) {
+		loadFromDatabase(cb);
 	},
 
 	emitChange: function() {

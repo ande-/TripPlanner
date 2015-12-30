@@ -4,16 +4,16 @@ var RightView = require('./RightView.react');
 var Header = require('./Header.react');
 var PlaceStore = require('./../stores/PlaceStore');
 
-function getState() {
-    return {
-      allPlaces: PlaceStore.getAll()
-    };
+function getState(cb) {
+  PlaceStore.getAll(function(places) {
+    cb({allPlaces: places});
+  });
 }
 
 var TripPlannerApp = React.createClass({
 
   getInitialState: function() {
-    return getState();
+    return {allPlaces: []};
   },
 
   componentDidMount: function() {
@@ -25,7 +25,9 @@ var TripPlannerApp = React.createClass({
   },
 
   _onChange: function() {
-    this.setState(getState());
+    getState(function(state) {
+        this.setState(state);
+    }.bind(this));
   },
 
   render: function() {

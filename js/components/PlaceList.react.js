@@ -10,7 +10,7 @@ var PlaceList = React.createClass( {
 			console.log('rendering place list ' + allPlaces.length);
 
 			for (var i = 0; i < allPlaces.length; i++) {
-				places.push(<PlaceItem key={allPlaces[i].id} item={allPlaces[i]} />);
+				places.push(<PlaceItem key={allPlaces[i].key} item={allPlaces[i]} />);
 			}
 		return (
 			<ul>{places}</ul>

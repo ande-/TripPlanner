@@ -6,7 +6,7 @@ var PlaceItem = React.createClass( {
 		var place = this.props.item; //the object from the store
 		return (
 
-			<li key ={place.id}>{place.name}
+			<li key ={place.key}>{place.name}
 			<button className="remove-button" onClick={this._onClickRemove}>&#10006;</button>
 			</li>
 		);
