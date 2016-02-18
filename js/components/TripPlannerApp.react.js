@@ -18,6 +18,7 @@ var TripPlannerApp = React.createClass({
 
   componentDidMount: function() {
     PlaceStore.addChangeListener(this._onChange);
+    this._onChange(); //trigger db load
   },
 
   componentWillUnmount: function() {
